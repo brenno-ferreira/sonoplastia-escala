@@ -499,11 +499,12 @@
         .podium {
             display: flex; align-items: flex-end; justify-content: center;
             gap: 14px; margin: 24px 0 30px;
-            flex-wrap: wrap;
         }
         .podium-col {
             display: flex; flex-direction: column; align-items: center;
-            width: 130px;
+            flex: 1;
+            max-width: 130px;
+            min-width: 0;
         }
         .podium-col .avatar, .podium-col .avatar-initials {
             width: 64px; height: 64px; font-size: 20px;
@@ -564,6 +565,25 @@
             min-width: 60px; text-align: right;
         }
         .rank-item .r-count small { font-size: 11px; color: #999; font-weight: 600; display: block; }
+
+        @media (max-width: 520px) {
+            .podium { gap: 8px; }
+            .podium-col .avatar, .podium-col .avatar-initials {
+                width: 52px; height: 52px; font-size: 16px;
+            }
+            .podium-col.p1 .avatar, .podium-col.p1 .avatar-initials {
+                width: 62px; height: 62px;
+            }
+            .podium-col .medal { font-size: 18px; }
+            .podium-col .p-nome { font-size: 11px; }
+            .podium-col.p1 .p-base { height: 90px; }
+            .podium-col.p2 .p-base { height: 66px; }
+            .podium-col.p3 .p-base { height: 50px; }
+            .podium-col .p-count { font-size: 18px; }
+            .podium-col .p-label { font-size: 9px; }
+            .rank-item { gap: 10px; padding: 10px 12px; }
+            .rank-item .r-count { min-width: 48px; font-size: 16px; }
+        }
 
         .stat-card {
             background: linear-gradient(135deg, #534AB7 0%, #7F77DD 100%);
