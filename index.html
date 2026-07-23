@@ -368,6 +368,83 @@
             display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 12px; margin-bottom: 20px;
         }
+
+        /* ===== RANKING ===== */
+        .rank-atalho {
+            background: #EEEDFE; color: #3C3489;
+            padding: 11px 16px; font-size: 13px;
+        }
+        .rank-atalho:hover { background: #DBD8F5; }
+
+        .podium {
+            display: flex; align-items: flex-end; justify-content: center;
+            gap: 14px; margin: 24px 0 30px;
+            flex-wrap: wrap;
+        }
+        .podium-col {
+            display: flex; flex-direction: column; align-items: center;
+            width: 130px;
+        }
+        .podium-col .avatar, .podium-col .avatar-initials {
+            width: 64px; height: 64px; font-size: 20px;
+            margin-bottom: 8px;
+            border-width: 3px;
+        }
+        .podium-col.p1 .avatar, .podium-col.p1 .avatar-initials { width: 80px; height: 80px; border-color: #F5C518; }
+        .podium-col.p2 .avatar, .podium-col.p2 .avatar-initials { border-color: #B8B8B8; }
+        .podium-col.p3 .avatar, .podium-col.p3 .avatar-initials { border-color: #CD7F32; }
+
+        .podium-col .medal { font-size: 22px; margin-bottom: 4px; }
+        .podium-col .p-nome {
+            font-size: 13px; font-weight: 700; color: #3C3489;
+            text-align: center; line-height: 1.2; margin-bottom: 6px;
+            word-break: break-word;
+        }
+        .podium-col .p-base {
+            width: 100%;
+            border-radius: 10px 10px 0 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: white; font-weight: 700;
+        }
+        .podium-col.p1 .p-base { height: 110px; background: linear-gradient(180deg, #F5C518, #D9A400); }
+        .podium-col.p2 .p-base { height: 80px; background: linear-gradient(180deg, #C4C4C4, #9E9E9E); }
+        .podium-col.p3 .p-base { height: 60px; background: linear-gradient(180deg, #D89B5A, #B06F2E); }
+        .podium-col .p-count { font-size: 22px; }
+        .podium-col .p-label { font-size: 10px; opacity: 0.9; font-weight: 600; }
+
+        .rank-list { display: flex; flex-direction: column; gap: 8px; }
+        .rank-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 12px 16px;
+            background: #f8f7fd;
+            border: 1px solid #e9e7f5;
+            border-radius: 10px;
+        }
+        .rank-item .pos {
+            width: 34px; height: 34px; min-width: 34px;
+            border-radius: 50%;
+            background: #534AB7; color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px;
+        }
+        .rank-item .r-info { flex: 1; min-width: 0; }
+        .rank-item .r-nome { font-weight: 700; color: #333; font-size: 14px; }
+        .rank-item .r-bar-bg {
+            height: 8px; background: #e9e7f5;
+            border-radius: 6px; margin-top: 6px; overflow: hidden;
+        }
+        .rank-item .r-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #534AB7, #7F77DD);
+            border-radius: 6px;
+        }
+        .rank-item .r-count {
+            font-weight: 700; color: #534AB7; font-size: 18px;
+            min-width: 60px; text-align: right;
+        }
+        .rank-item .r-count small { font-size: 11px; color: #999; font-weight: 600; display: block; }
+
         .stat-card {
             background: linear-gradient(135deg, #534AB7 0%, #7F77DD 100%);
             color: white; padding: 16px; border-radius: 10px; text-align: center;
@@ -436,6 +513,9 @@
                 <button class="menu-item active" id="mi-ver" onclick="irPara('ver')">
                     <i class="fas fa-calendar-days"></i> Visualizar Escala
                 </button>
+                <button class="menu-item" id="mi-ranking" onclick="irPara('ranking')">
+                    <i class="fas fa-trophy"></i> Ranking
+                </button>
 
                 <div class="menu-label">Administração</div>
                 <button class="menu-item" id="mi-montar" onclick="irPara('montar')">
@@ -494,6 +574,36 @@
                             <tbody id="calBody"></tbody>
                         </table>
                     </div>
+                </div>
+            </section>
+
+            <!-- ===== PÁGINA: RANKING ===== -->
+            <section class="page" id="page-ranking">
+                <div class="page-title">Ranking da Sonoplastia</div>
+                <div class="page-subtitle">Veja quem mais foi escalado no período escolhido</div>
+
+                <div class="card">
+                    <div class="filter-bar">
+                        <div class="form-group">
+                            <label>De</label>
+                            <input type="date" id="rankInicio" onchange="renderizarRanking()">
+                        </div>
+                        <div class="form-group">
+                            <label>Até</label>
+                            <input type="date" id="rankFim" onchange="renderizarRanking()">
+                        </div>
+                        <div class="form-group" style="min-width:auto;">
+                            <label>&nbsp;</label>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                <button class="btn rank-atalho" onclick="atalhoRanking('mes')">Este mês</button>
+                                <button class="btn rank-atalho" onclick="atalhoRanking('ano')">Este ano</button>
+                                <button class="btn rank-atalho" onclick="atalhoRanking('tudo')">Tudo</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="podium" id="podium"></div>
+                    <div class="rank-list" id="rankList"></div>
                 </div>
             </section>
 
@@ -710,6 +820,7 @@
                     }
                     renderizarMes();
                     renderizarSonoplastas();
+                    renderizarRanking();
                 })
                 .catch(err => console.warn('Não foi possível carregar as fotos da planilha:', err));
         }
@@ -740,6 +851,7 @@
         escalaRef.on('value', (snapshot) => {
             escala = snapshot.val() || {};
             renderizarMes();
+            renderizarRanking();
         });
 
         sonoplastasRef.on('value', (snapshot) => {
@@ -1104,6 +1216,90 @@
             `;
         }
 
+        // ================== RANKING ==================
+        function atalhoRanking(tipo) {
+            const hoje = new Date();
+            const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+            if (tipo === 'mes') {
+                document.getElementById('rankInicio').value = fmt(new Date(hoje.getFullYear(), hoje.getMonth(), 1));
+                document.getElementById('rankFim').value = fmt(new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0));
+            } else if (tipo === 'ano') {
+                document.getElementById('rankInicio').value = `${hoje.getFullYear()}-01-01`;
+                document.getElementById('rankFim').value = `${hoje.getFullYear()}-12-31`;
+            } else {
+                document.getElementById('rankInicio').value = '';
+                document.getElementById('rankFim').value = '';
+            }
+            renderizarRanking();
+        }
+
+        function renderizarRanking() {
+            const podiumEl = document.getElementById('podium');
+            const listEl = document.getElementById('rankList');
+            if (!podiumEl) return;
+
+            const inicio = document.getElementById('rankInicio').value;
+            const fim = document.getElementById('rankFim').value;
+
+            // Contar escalações por sonoplasta dentro do período
+            const contagem = {};
+            Object.values(escala).forEach(ev => {
+                if (!ev.data || !ev.sonoplasta) return;
+                if (inicio && ev.data < inicio) return;
+                if (fim && ev.data > fim) return;
+                contagem[ev.sonoplasta] = (contagem[ev.sonoplasta] || 0) + 1;
+            });
+
+            const ranking = Object.keys(contagem)
+                .map(nome => ({ nome, total: contagem[nome] }))
+                .sort((a, b) => b.total - a.total || a.nome.localeCompare(b.nome, 'pt-BR'));
+
+            if (ranking.length === 0) {
+                podiumEl.innerHTML = '';
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-trophy"></i>
+                        Nenhuma escalação encontrada nesse período
+                    </div>`;
+                return;
+            }
+
+            // Pódio (top 3) — ordem visual: 2º, 1º, 3º
+            const medalhas = ['🥇', '🥈', '🥉'];
+            const top3 = ranking.slice(0, 3);
+            const ordemVisual = [];
+            if (top3[1]) ordemVisual.push({ ...top3[1], pos: 2 });
+            if (top3[0]) ordemVisual.push({ ...top3[0], pos: 1 });
+            if (top3[2]) ordemVisual.push({ ...top3[2], pos: 3 });
+
+            podiumEl.innerHTML = ordemVisual.map(p => `
+                <div class="podium-col p${p.pos}">
+                    <div class="medal">${medalhas[p.pos - 1]}</div>
+                    ${avatarHtml(p.nome)}
+                    <div class="p-nome">${escapeHtml(p.nome)}</div>
+                    <div class="p-base">
+                        <div class="p-count">${p.total}</div>
+                        <div class="p-label">${p.total === 1 ? 'escalação' : 'escalações'}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Lista completa
+            const max = ranking[0].total;
+            listEl.innerHTML = ranking.map((r, i) => `
+                <div class="rank-item">
+                    <div class="pos">${i + 1}º</div>
+                    ${avatarHtml(r.nome)}
+                    <div class="r-info">
+                        <div class="r-nome">${escapeHtml(r.nome)}</div>
+                        <div class="r-bar-bg"><div class="r-bar" style="width:${Math.round(r.total / max * 100)}%"></div></div>
+                    </div>
+                    <div class="r-count">${r.total}<small>${r.total === 1 ? 'escalação' : 'escalações'}</small></div>
+                </div>
+            `).join('');
+        }
+
         // ================== UTIL ==================
         function escapeHtml(str) {
             return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -1119,6 +1315,7 @@
         document.getElementById('dataEscala').value =
             `${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}-${String(hj.getDate()).padStart(2,'0')}`;
         atualizarPreview();
+        atalhoRanking('mes');
     </script>
 </body>
 </html>
