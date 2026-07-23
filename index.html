@@ -131,7 +131,7 @@
             flex: 1;
             margin-left: 260px;
             padding: 32px;
-            max-width: 1100px;
+            max-width: 1200px;
         }
 
         .page { display: none; animation: fadeIn 0.3s; }
@@ -235,64 +235,124 @@
             font-weight: 600; color: #333; font-size: 14px;
             display: flex; align-items: center; gap: 10px;
         }
-        .sono-item .name i { color: #534AB7; }
 
-        /* ===== VISUALIZAR / CALENDÁRIO ===== */
+        .avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #CECBF6;
+            background: #EEEDFE;
+        }
+        .avatar-initials {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: #534AB7;
+            color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700;
+            border: 2px solid #CECBF6;
+        }
+
+        /* ===== CALENDÁRIO EM GRADE ===== */
         .filter-bar {
             display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;
             margin-bottom: 20px;
         }
         .filter-bar .form-group { margin-bottom: 0; min-width: 140px; }
 
-        .month-grid { display: flex; flex-direction: column; gap: 8px; }
+        .cal-scroll { overflow-x: auto; }
 
-        .day-row {
-            display: flex; align-items: stretch; gap: 12px;
+        .calendar {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            min-width: 720px;
+        }
+
+        .calendar th {
+            background: #534AB7;
+            color: white;
+            padding: 10px 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #4a41a5;
+        }
+        .calendar th.weekend { background: #3C3489; }
+
+        .calendar td {
+            border: 1px solid #e4e2f2;
+            vertical-align: top;
+            padding: 6px;
+            height: 110px;
             background: white;
-            border: 1px solid #eceaf6;
-            border-radius: 10px;
-            padding: 10px 14px;
         }
-        .day-row.has-event {
-            border-color: #AFA9EC;
-            background: #FBFAFF;
+        .calendar td.outside { background: #f7f6fc; }
+        .calendar td.weekend-cell { background: #FCFBF6; }
+        .calendar td.today {
+            outline: 3px solid #534AB7;
+            outline-offset: -3px;
         }
-        .day-row.is-weekend { background: #FAF9F4; }
-        .day-row.has-event.is-weekend { background: #FBFAFF; }
-        .day-row.today { border: 2px solid #534AB7; }
+        .calendar td.has-event { background: #FBFAFF; }
 
-        .day-date {
-            width: 64px; min-width: 64px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-right: 1px solid #eee;
-            padding-right: 12px;
-        }
-        .day-date .num { font-size: 20px; font-weight: 700; color: #3C3489; }
-        .day-date .wd { font-size: 11px; text-transform: uppercase; color: #999; font-weight: 600; }
-        .day-row.has-event .day-date .num { color: #534AB7; }
-
-        .day-events { flex: 1; display: flex; flex-direction: column; gap: 6px; justify-content: center; }
-        .day-empty { color: #ccc; font-size: 12px; font-style: italic; }
-
-        .event-chip {
-            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-            padding: 8px 12px;
-            background: #EEEDFE;
-            border-radius: 8px;
+        .cell-daynum {
             font-size: 13px;
+            font-weight: 700;
+            color: #999;
+            text-align: right;
+            margin-bottom: 4px;
         }
-        .event-chip .sono { font-weight: 700; color: #3C3489; display: flex; align-items: center; gap: 6px; }
-        .event-chip .tipo {
-            background: #534AB7; color: white;
-            padding: 2px 10px; border-radius: 20px;
-            font-size: 11px; font-weight: 600;
+        .calendar td.today .cell-daynum { color: #534AB7; }
+        .calendar td.has-event .cell-daynum { color: #3C3489; }
+
+        .cal-event {
+            background: #EEEDFE;
+            border: 1px solid #DBD8F5;
+            border-radius: 8px;
+            padding: 6px;
+            margin-bottom: 5px;
+            text-align: center;
+            position: relative;
         }
-        .event-chip .del {
-            margin-left: auto;
+
+        .cal-event .foto-wrap { display: flex; justify-content: center; margin-bottom: 4px; }
+        .cal-event .avatar, .cal-event .avatar-initials {
+            width: 42px; height: 42px; font-size: 14px;
+        }
+
+        .cal-event .ev-nome {
+            font-size: 11px;
+            font-weight: 700;
+            color: #3C3489;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .cal-event .ev-tipo {
+            display: inline-block;
+            margin-top: 3px;
+            background: #534AB7;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .cal-event .del {
+            position: absolute;
+            top: 2px; right: 4px;
             background: transparent; border: none;
-            color: #b09fd8; cursor: pointer; font-size: 13px;
+            color: #b8aede; cursor: pointer;
+            font-size: 11px;
+            padding: 2px;
         }
-        .event-chip .del:hover { color: #d64545; }
+        .cal-event .del:hover { color: #d64545; }
 
         .month-stats {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -404,7 +464,23 @@
                     </div>
 
                     <div class="month-stats" id="monthStats"></div>
-                    <div class="month-grid" id="monthGrid"></div>
+
+                    <div class="cal-scroll">
+                        <table class="calendar">
+                            <thead>
+                                <tr>
+                                    <th class="weekend">Dom</th>
+                                    <th>Seg</th>
+                                    <th>Ter</th>
+                                    <th>Qua</th>
+                                    <th>Qui</th>
+                                    <th>Sex</th>
+                                    <th class="weekend">Sáb</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -507,6 +583,10 @@
                             </button>
                         </div>
                     </div>
+                    <div class="info-box">
+                        <i class="fas fa-image"></i>
+                        As <strong>fotos</strong> são carregadas automaticamente da planilha do Google (colunas NOME e FOTO). Para um sonoplasta aparecer com foto, o nome cadastrado aqui deve ser igual ao nome na planilha.
+                    </div>
                 </div>
 
                 <div class="card">
@@ -528,6 +608,9 @@
         // ================== CONFIGURAÇÕES ==================
         const SENHA_ADMIN = "liberdade2026"; // <<< TROQUE A SENHA AQUI
 
+        // Link CSV da planilha publicada (colunas NOME e FOTO)
+        const PLANILHA_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTl1OYbuv6NtiWvmOPRj26QT8Y5RpMQeaFq6B2YzIgV70GnIAxkLeCGJJnFtERO6l0vRsKtk_jGH2Rx/pub?gid=115075574&single=true&output=csv";
+
         const firebaseConfig = {
             apiKey: "AIzaSyAMYMp2Vn9ZI98ypQbi1KyoHWc4J4xrgn4",
             authDomain: "sonoplastia-escala.firebaseapp.com",
@@ -547,13 +630,86 @@
         // ================== ESTADO ==================
         let escala = {};       // { pushKey: {data:'YYYY-MM-DD', sonoplasta, evento} }
         let sonoplastas = {};  // { pushKey: {nome} }
+        let fotos = {};        // { nomeNormalizado: urlFoto } - vindo da planilha
         let modoEscala = 'normal';
         let ehAdmin = sessionStorage.getItem('sonoAdmin') === '1';
         let paginaDestino = null;
 
-        const nomesDias = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
         const nomesDiasCurto = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
         const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+        // ================== FOTOS DA PLANILHA ==================
+        function normalizarNome(n) {
+            return String(n || '').trim().toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+
+        function converterUrlFoto(url) {
+            url = String(url || '').trim();
+            if (!url) return '';
+            // Links do Google Drive precisam ser convertidos para exibição direta
+            let m = url.match(/drive\.google\.com\/file\/d\/([^\/\?]+)/);
+            if (!m) m = url.match(/drive\.google\.com\/(?:open|uc)\?.*id=([^&]+)/);
+            if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w200';
+            return url;
+        }
+
+        function parseCSV(text) {
+            const rows = [];
+            let row = [], campo = '', dentroAspas = false;
+            for (let i = 0; i < text.length; i++) {
+                const c = text[i];
+                if (dentroAspas) {
+                    if (c === '"') {
+                        if (text[i+1] === '"') { campo += '"'; i++; }
+                        else dentroAspas = false;
+                    } else campo += c;
+                } else {
+                    if (c === '"') dentroAspas = true;
+                    else if (c === ',') { row.push(campo); campo = ''; }
+                    else if (c === '\n') { row.push(campo); rows.push(row); row = []; campo = ''; }
+                    else if (c !== '\r') campo += c;
+                }
+            }
+            if (campo !== '' || row.length) { row.push(campo); rows.push(row); }
+            return rows;
+        }
+
+        function carregarFotos() {
+            fetch(PLANILHA_CSV)
+                .then(r => r.text())
+                .then(text => {
+                    const rows = parseCSV(text);
+                    if (rows.length < 2) return;
+
+                    const header = rows[0].map(h => normalizarNome(h));
+                    const idxNome = header.findIndex(h => h.includes('nome'));
+                    const idxFoto = header.findIndex(h => h.includes('foto'));
+                    if (idxNome === -1 || idxFoto === -1) return;
+
+                    fotos = {};
+                    for (let i = 1; i < rows.length; i++) {
+                        const nome = rows[i][idxNome];
+                        const foto = rows[i][idxFoto];
+                        if (nome && nome.trim()) {
+                            fotos[normalizarNome(nome)] = converterUrlFoto(foto);
+                        }
+                    }
+                    renderizarMes();
+                    renderizarSonoplastas();
+                })
+                .catch(err => console.warn('Não foi possível carregar as fotos da planilha:', err));
+        }
+
+        function avatarHtml(nome, tamanhoClasse) {
+            const url = fotos[normalizarNome(nome)];
+            const iniciais = String(nome || '?').trim().split(/\s+/).map(p => p[0]).slice(0, 2).join('').toUpperCase();
+            if (url) {
+                return `<img class="avatar" src="${escapeHtml(url)}" alt="${escapeHtml(nome)}" loading="lazy"
+                            onerror="this.outerHTML='<div class=&quot;avatar-initials&quot;>${escapeHtml(iniciais)}</div>'">`;
+            }
+            return `<div class="avatar-initials">${escapeHtml(iniciais)}</div>`;
+        }
 
         // ================== CONEXÃO ==================
         database.ref('.info/connected').on('value', (snap) => {
@@ -650,7 +806,7 @@
             const nome = input.value.trim();
             if (!nome) { alert('Digite um nome!'); return; }
 
-            const existe = Object.values(sonoplastas).some(s => s.nome.toLowerCase() === nome.toLowerCase());
+            const existe = Object.values(sonoplastas).some(s => normalizarNome(s.nome) === normalizarNome(nome));
             if (existe) { alert('Esse sonoplasta já está cadastrado!'); return; }
 
             sonoplastasRef.push({ nome: nome }).then(() => {
@@ -670,6 +826,7 @@
 
         function renderizarSonoplastas() {
             const container = document.getElementById('sonoList');
+            if (!container) return;
             const ids = Object.keys(sonoplastas);
 
             if (ids.length === 0) {
@@ -685,7 +842,10 @@
 
             container.innerHTML = ordenados.map(id => `
                 <div class="sono-item">
-                    <div class="name"><i class="fas fa-headphones"></i> ${escapeHtml(sonoplastas[id].nome)}</div>
+                    <div class="name">
+                        ${avatarHtml(sonoplastas[id].nome)}
+                        ${escapeHtml(sonoplastas[id].nome)}
+                    </div>
                     <button class="btn btn-danger-sm" onclick="removerSonoplasta('${id}', '${escapeHtml(sonoplastas[id].nome)}')">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -721,11 +881,9 @@
         document.getElementById('dataEscala').addEventListener('change', atualizarPreview);
 
         function calcularDias(dataStr, modo) {
-            // Retorna array de datas 'YYYY-MM-DD' conforme o modo
             const base = new Date(dataStr + 'T00:00:00');
-            const diaSemana = base.getDay(); // 0=Dom ... 6=Sáb
+            const diaSemana = base.getDay();
 
-            // Encontrar a segunda-feira da semana (considerando semana de Seg a Dom)
             const segunda = new Date(base);
             const offset = (diaSemana === 0) ? -6 : (1 - diaSemana);
             segunda.setDate(base.getDate() + offset);
@@ -749,7 +907,6 @@
                 return dias;
             }
 
-            // modo normal: quarta (seg+2), sábado (seg+5), domingo (seg+6)
             return [2, 5, 6].map(i => {
                 const d = new Date(segunda);
                 d.setDate(segunda.getDate() + i);
@@ -806,7 +963,6 @@
                 msgOk.classList.add('show');
                 setTimeout(() => msgOk.classList.remove('show'), 4000);
 
-                // Ir para o mês da escala no filtro
                 const dt = new Date(dias[0] + 'T00:00:00');
                 document.getElementById('filtroMes').value = dt.getMonth();
                 document.getElementById('filtroAno').value = dt.getFullYear();
@@ -824,7 +980,7 @@
             }
         }
 
-        // ================== VISUALIZAR / CALENDÁRIO ==================
+        // ================== CALENDÁRIO EM GRADE ==================
         function montarFiltros() {
             const selMes = document.getElementById('filtroMes');
             const selAno = document.getElementById('filtroAno');
@@ -843,14 +999,15 @@
         }
 
         function renderizarMes() {
-            const grid = document.getElementById('monthGrid');
+            const tbody = document.getElementById('calBody');
             const statsEl = document.getElementById('monthStats');
-            if (!grid) return;
+            if (!tbody) return;
 
             const mes = parseInt(document.getElementById('filtroMes').value);
             const ano = parseInt(document.getElementById('filtroAno').value);
 
             const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+            const primeiroDW = new Date(ano, mes, 1).getDay(); // 0=Dom
             const hoje = new Date();
             const hojeStr = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(hoje.getDate()).padStart(2,'0')}`;
 
@@ -862,51 +1019,66 @@
                 porData[ev.data].push({ id, ...ev });
             });
 
-            let html = '';
             let totalEventos = 0;
+            let diasComEscala = 0;
             const sonosDoMes = new Set();
 
-            for (let dia = 1; dia <= diasNoMes; dia++) {
-                const dataStr = `${ano}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
-                const dt = new Date(ano, mes, dia);
-                const dw = dt.getDay();
-                const eventos = porData[dataStr] || [];
+            let html = '';
+            let dia = 1;
+            const totalCelulas = Math.ceil((primeiroDW + diasNoMes) / 7) * 7;
+
+            for (let c = 0; c < totalCelulas; c++) {
+                if (c % 7 === 0) html += '<tr>';
+
+                const dw = c % 7;
                 const ehFimDeSemana = (dw === 0 || dw === 6);
-                const ehHoje = (dataStr === hojeStr);
 
-                totalEventos += eventos.length;
-                eventos.forEach(e => sonosDoMes.add(e.sonoplasta));
-
-                let eventosHtml;
-                if (eventos.length === 0) {
-                    eventosHtml = '<div class="day-empty">— sem escala —</div>';
+                if (c < primeiroDW || dia > diasNoMes) {
+                    html += `<td class="outside"></td>`;
                 } else {
-                    eventosHtml = eventos.map(ev => `
-                        <div class="event-chip">
-                            <span class="sono"><i class="fas fa-headphones"></i> ${escapeHtml(ev.sonoplasta)}</span>
-                            <span class="tipo">${escapeHtml(ev.evento || 'Evento')}</span>
-                            ${ehAdmin ? `<button class="del" title="Remover" onclick="removerEvento('${ev.id}')"><i class="fas fa-trash"></i></button>` : ''}
+                    const dataStr = `${ano}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+                    const eventos = (porData[dataStr] || []).sort((a,b) => (a.evento||'').localeCompare(b.evento||''));
+                    const ehHoje = (dataStr === hojeStr);
+
+                    if (eventos.length) {
+                        diasComEscala++;
+                        totalEventos += eventos.length;
+                        eventos.forEach(e => sonosDoMes.add(e.sonoplasta));
+                    }
+
+                    const eventosHtml = eventos.map(ev => `
+                        <div class="cal-event">
+                            ${ehAdmin ? `<button class="del" title="Remover" onclick="removerEvento('${ev.id}')"><i class="fas fa-times"></i></button>` : ''}
+                            <div class="foto-wrap">${avatarHtml(ev.sonoplasta)}</div>
+                            <div class="ev-nome">${escapeHtml(ev.sonoplasta)}</div>
+                            <div class="ev-tipo">${escapeHtml(ev.evento || 'Evento')}</div>
                         </div>
                     `).join('');
+
+                    const classes = [
+                        eventos.length ? 'has-event' : '',
+                        ehFimDeSemana ? 'weekend-cell' : '',
+                        ehHoje ? 'today' : ''
+                    ].filter(Boolean).join(' ');
+
+                    html += `
+                        <td class="${classes}">
+                            <div class="cell-daynum">${dia}</div>
+                            ${eventosHtml}
+                        </td>
+                    `;
+                    dia++;
                 }
 
-                html += `
-                    <div class="day-row ${eventos.length ? 'has-event' : ''} ${ehFimDeSemana ? 'is-weekend' : ''} ${ehHoje ? 'today' : ''}">
-                        <div class="day-date">
-                            <div class="num">${String(dia).padStart(2,'0')}</div>
-                            <div class="wd">${nomesDiasCurto[dw]}</div>
-                        </div>
-                        <div class="day-events">${eventosHtml}</div>
-                    </div>
-                `;
+                if (c % 7 === 6) html += '</tr>';
             }
 
-            grid.innerHTML = html;
+            tbody.innerHTML = html;
 
             statsEl.innerHTML = `
                 <div class="stat-card">
                     <div class="label">Dias com escala</div>
-                    <div class="value">${Object.keys(porData).filter(d => d.startsWith(`${ano}-${String(mes+1).padStart(2,'0')}`)).length}</div>
+                    <div class="value">${diasComEscala}</div>
                 </div>
                 <div class="stat-card">
                     <div class="label">Total de eventos</div>
@@ -928,6 +1100,7 @@
         montarFiltros();
         renderizarMes();
         atualizarUIAdmin();
+        carregarFotos();
 
         const hj = new Date();
         document.getElementById('dataEscala').value =
