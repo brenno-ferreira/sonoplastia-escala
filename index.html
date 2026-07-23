@@ -6,499 +6,528 @@
     <title>Escala de Sonoplastia - Igreja Adventista Liberdade</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            background: linear-gradient(135deg, #534AB7 0%, #7F77DD 100%);
+            background: #f4f3fb;
             min-height: 100vh;
-            padding: 20px;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(83, 74, 183, 0.3);
-            overflow: hidden;
-        }
+        .layout { display: flex; min-height: 100vh; }
 
-        .header {
-            background: linear-gradient(135deg, #534AB7 0%, #3C3489 100%);
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #534AB7 0%, #3C3489 100%);
             color: white;
-            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+            transition: transform 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 28px 20px;
             text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
         }
 
-        .header-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-
-        .header h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
+        .sidebar-header .icon { font-size: 36px; margin-bottom: 8px; }
+        .sidebar-header h1 { font-size: 18px; font-weight: 700; }
+        .sidebar-header p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
 
         .sync-status {
             display: inline-block;
-            margin-top: 12px;
-            padding: 8px 16px;
-            background: rgba(255,255,255,0.2);
+            margin-top: 10px;
+            padding: 5px 12px;
+            background: rgba(255,255,255,0.15);
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
         }
+        .sync-status.connected { background: rgba(76, 175, 80, 0.35); color: #C8E6C9; }
+        .sync-status.disconnected { background: rgba(244, 67, 54, 0.35); color: #FFCDD2; }
 
-        .sync-status.connected {
-            background: rgba(76, 175, 80, 0.3);
-            color: #4CAF50;
+        .sync-indicator {
+            display: inline-block; width: 8px; height: 8px;
+            border-radius: 50%; background: currentColor;
+            margin-right: 6px; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+        .menu { flex: 1; padding: 16px 12px; }
+
+        .menu-label {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+            opacity: 0.6; padding: 12px 12px 6px;
         }
 
-        .sync-status.disconnected {
-            background: rgba(244, 67, 54, 0.3);
-            color: #F44336;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #f0f0f0;
-            background: #fafafa;
-        }
-
-        .tab-button {
-            flex: 1;
-            padding: 16px;
+        .menu-item {
+            display: flex; align-items: center; gap: 12px;
+            width: 100%;
+            padding: 12px 14px;
             border: none;
             background: transparent;
-            cursor: pointer;
+            color: rgba(255,255,255,0.85);
             font-size: 14px;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            margin-bottom: 4px;
+        }
+
+        .menu-item:hover { background: rgba(255,255,255,0.12); color: white; }
+        .menu-item.active { background: rgba(255,255,255,0.22); color: white; }
+        .menu-item i { width: 18px; text-align: center; }
+        .menu-item .lock { margin-left: auto; font-size: 11px; opacity: 0.7; }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            font-size: 12px;
+        }
+
+        .btn-logout {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%;
+            padding: 10px;
+            background: rgba(255,255,255,0.12);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
             font-weight: 600;
-            color: #999;
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.22); }
+
+        .admin-badge {
+            text-align: center; margin-bottom: 10px;
+            font-size: 12px; opacity: 0.9;
         }
 
-        .tab-button.active {
-            color: #534AB7;
-            border-bottom-color: #534AB7;
-            background: white;
-        }
-
-        .tab-button:hover {
-            color: #534AB7;
-            background: white;
-        }
-
-        .tab-content {
+        /* ===== MOBILE TOGGLE ===== */
+        .mobile-topbar {
             display: none;
-            padding: 30px;
-            animation: fadeIn 0.3s;
+            position: fixed; top: 0; left: 0; right: 0;
+            background: #534AB7; color: white;
+            padding: 14px 16px;
+            z-index: 99;
+            align-items: center; gap: 12px;
+        }
+        .mobile-topbar button {
+            background: transparent; border: none; color: white;
+            font-size: 20px; cursor: pointer;
+        }
+        .mobile-topbar span { font-weight: 700; font-size: 15px; }
+
+        /* ===== CONTENT ===== */
+        .content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 32px;
+            max-width: 1100px;
         }
 
-        .tab-content.active {
-            display: block;
-        }
+        .page { display: none; animation: fadeIn 0.3s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .page-title {
+            font-size: 24px; color: #3C3489; font-weight: 700;
+            margin-bottom: 6px;
         }
+        .page-subtitle { color: #888; font-size: 14px; margin-bottom: 24px; }
 
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-
-        .loading i {
-            font-size: 32px;
-            margin-bottom: 16px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .form-group {
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(83, 74, 183, 0.08);
             margin-bottom: 20px;
         }
 
+        /* ===== FORMS ===== */
+        .form-group { margin-bottom: 18px; }
         .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
+            display: block; margin-bottom: 6px;
+            font-weight: 600; color: #333; font-size: 13px;
+        }
+        .form-group input, .form-group select {
+            width: 100%; padding: 11px 12px;
+            border: 2px solid #e4e2f2; border-radius: 8px;
+            font-size: 14px; font-family: inherit;
+            background: white;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none; border-color: #534AB7;
         }
 
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: border-color 0.3s;
-        }
+        .form-row { display: flex; gap: 14px; flex-wrap: wrap; }
+        .form-row .form-group { flex: 1; min-width: 180px; }
 
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
+        .radio-cards { display: flex; gap: 10px; flex-wrap: wrap; }
+        .radio-card {
+            flex: 1; min-width: 150px;
+            border: 2px solid #e4e2f2;
+            border-radius: 10px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .radio-card:hover { border-color: #AFA9EC; }
+        .radio-card.selected {
             border-color: #534AB7;
+            background: #EEEDFE;
         }
+        .radio-card .rc-icon { font-size: 20px; color: #534AB7; margin-bottom: 6px; }
+        .radio-card .rc-title { font-weight: 700; font-size: 13px; color: #333; }
+        .radio-card .rc-desc { font-size: 11px; color: #888; margin-top: 4px; }
+        .radio-card input { display: none; }
 
         .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
+            padding: 12px 22px;
+            border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.2s;
         }
-
         .btn-primary {
             background: linear-gradient(135deg, #534AB7 0%, #3C3489 100%);
             color: white;
-            width: 100%;
-            justify-content: center;
         }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(83, 74, 183, 0.3);
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 16px rgba(83,74,183,0.3); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-block { width: 100%; justify-content: center; }
+        .btn-danger-sm {
+            background: #ffecec; color: #d64545;
+            padding: 7px 10px; font-size: 12px;
         }
+        .btn-danger-sm:hover { background: #ffd6d6; }
 
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        .msg {
+            padding: 12px; border-radius: 8px;
+            margin-bottom: 16px; font-size: 13px;
+            display: none;
         }
+        .msg.show { display: block; }
+        .msg.success { background: #E3F6E5; color: #2E7D32; }
+        .msg.error { background: #FDE8E8; color: #C62828; }
 
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-            padding: 8px 12px;
-            font-size: 12px;
+        /* ===== LISTA SONOPLASTAS ===== */
+        .sono-list { display: flex; flex-direction: column; gap: 8px; }
+        .sono-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px;
+            background: #f8f7fd;
+            border: 1px solid #e9e7f5;
+            border-radius: 10px;
         }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
+        .sono-item .name {
+            font-weight: 600; color: #333; font-size: 14px;
+            display: flex; align-items: center; gap: 10px;
         }
+        .sono-item .name i { color: #534AB7; }
 
-        .btn-danger {
-            background: #ff6b6b;
-            color: white;
-            padding: 8px 12px;
-            font-size: 12px;
-        }
-
-        .btn-danger:hover {
-            background: #ee5a52;
-        }
-
-        .semana-card {
-            background: #f9f9f9;
-            border: 2px solid #e8e8e8;
-            border-radius: 12px;
-            padding: 20px;
+        /* ===== VISUALIZAR / CALENDÁRIO ===== */
+        .filter-bar {
+            display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;
             margin-bottom: 20px;
-            transition: all 0.3s;
         }
+        .filter-bar .form-group { margin-bottom: 0; min-width: 140px; }
 
-        .semana-card:hover {
-            border-color: #534AB7;
-            box-shadow: 0 4px 12px rgba(83, 74, 183, 0.1);
-        }
+        .month-grid { display: flex; flex-direction: column; gap: 8px; }
 
-        .semana-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 16px;
-        }
-
-        .semana-info h3 {
-            font-size: 18px;
-            color: #534AB7;
-            margin-bottom: 4px;
-        }
-
-        .semana-info p {
-            font-size: 12px;
-            color: #999;
-        }
-
-        .semana-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .dias-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .dia-box {
+        .day-row {
+            display: flex; align-items: stretch; gap: 12px;
             background: white;
-            border: 2px solid #f0f0f0;
+            border: 1px solid #eceaf6;
+            border-radius: 10px;
+            padding: 10px 14px;
+        }
+        .day-row.has-event {
+            border-color: #AFA9EC;
+            background: #FBFAFF;
+        }
+        .day-row.is-weekend { background: #FAF9F4; }
+        .day-row.has-event.is-weekend { background: #FBFAFF; }
+        .day-row.today { border: 2px solid #534AB7; }
+
+        .day-date {
+            width: 64px; min-width: 64px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-right: 1px solid #eee;
+            padding-right: 12px;
+        }
+        .day-date .num { font-size: 20px; font-weight: 700; color: #3C3489; }
+        .day-date .wd { font-size: 11px; text-transform: uppercase; color: #999; font-weight: 600; }
+        .day-row.has-event .day-date .num { color: #534AB7; }
+
+        .day-events { flex: 1; display: flex; flex-direction: column; gap: 6px; justify-content: center; }
+        .day-empty { color: #ccc; font-size: 12px; font-style: italic; }
+
+        .event-chip {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            padding: 8px 12px;
+            background: #EEEDFE;
             border-radius: 8px;
-            padding: 12px;
-            text-align: center;
-            transition: all 0.3s;
+            font-size: 13px;
         }
-
-        .dia-box.principal {
-            background: linear-gradient(135deg, #E6F1FB 0%, #D1E5F7 100%);
-            border-color: #85B7EB;
-            box-shadow: 0 2px 8px rgba(53, 119, 221, 0.15);
+        .event-chip .sono { font-weight: 700; color: #3C3489; display: flex; align-items: center; gap: 6px; }
+        .event-chip .tipo {
+            background: #534AB7; color: white;
+            padding: 2px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 600;
         }
-
-        .dia-box .dia-nome {
-            font-weight: 700;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 4px;
-            text-transform: uppercase;
+        .event-chip .del {
+            margin-left: auto;
+            background: transparent; border: none;
+            color: #b09fd8; cursor: pointer; font-size: 13px;
         }
+        .event-chip .del:hover { color: #d64545; }
 
-        .dia-box.principal .dia-nome {
-            color: #185FA5;
+        .month-stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px; margin-bottom: 20px;
         }
-
-        .dia-box .dia-data {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
+        .stat-card {
+            background: linear-gradient(135deg, #534AB7 0%, #7F77DD 100%);
+            color: white; padding: 16px; border-radius: 10px; text-align: center;
         }
+        .stat-card .label { font-size: 11px; opacity: 0.9; margin-bottom: 4px; }
+        .stat-card .value { font-size: 26px; font-weight: 700; }
 
-        .dia-box.principal .dia-data {
-            color: #185FA5;
-        }
-
-        .dia-box .dia-icon {
-            font-size: 16px;
-            margin-top: 4px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .empty-state i {
-            font-size: 48px;
-            color: #ddd;
-            margin-bottom: 16px;
-        }
-
-        .empty-state h3 {
-            color: #999;
-            margin-bottom: 8px;
-        }
-
-        .empty-state p {
-            color: #bbb;
-            font-size: 14px;
+        /* ===== LOGIN ===== */
+        .login-box { max-width: 400px; margin: 0 auto; }
+        .login-box .icon-big {
+            text-align: center; font-size: 44px; color: #534AB7; margin-bottom: 16px;
         }
 
         .info-box {
-            background: #EEEDFE;
-            border: 2px solid #CECBF6;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #3C3489;
+            background: #EEEDFE; border: 2px solid #CECBF6;
+            border-radius: 8px; padding: 14px;
+            font-size: 13px; color: #3C3489; margin-top: 16px;
         }
+        .info-box i { margin-right: 6px; }
 
-        .info-box i {
-            margin-right: 8px;
-        }
+        .empty-state { text-align: center; padding: 40px 16px; color: #aaa; }
+        .empty-state i { font-size: 40px; color: #ddd; margin-bottom: 12px; display: block; }
 
-        .success-message {
-            background: #C8E6C9;
-            color: #2E7D32;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            display: none;
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 16px;
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 2px solid #f0f0f0;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #534AB7 0%, #7F77DD 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .stat-card .label {
-            font-size: 12px;
-            opacity: 0.9;
-            margin-bottom: 8px;
-        }
-
-        .stat-card .value {
-            font-size: 32px;
-            font-weight: 700;
-        }
-
-        .edit-form {
-            background: white;
-            border: 2px solid #f0f0f0;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-
-        .edit-form input {
-            width: 100%;
-            margin-bottom: 12px;
-        }
-
-        .edit-form .buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .edit-form .btn {
-            flex: 1;
-        }
-
-        .sync-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #4CAF50;
-            margin-right: 6px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 24px;
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 860px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .mobile-topbar { display: flex; }
+            .content { margin-left: 0; padding: 76px 16px 24px; }
+            .overlay {
+                display: none;
+                position: fixed; inset: 0;
+                background: rgba(0,0,0,0.4);
+                z-index: 90;
             }
-
-            .dias-grid {
-                grid-template-columns: repeat(7, 1fr);
-            }
-
-            .dia-box {
-                padding: 8px;
-            }
-
-            .dia-box .dia-data {
-                font-size: 12px;
-            }
+            .overlay.show { display: block; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="header-icon">🎵</div>
-            <h1>Escala de Sonoplastia</h1>
-            <p>Igreja Adventista Liberdade</p>
-            <div class="sync-status" id="syncStatus">
-                <span class="sync-indicator"></span>
-                <span id="syncText">Conectando...</span>
+
+    <div class="mobile-topbar">
+        <button onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <span>🎵 Escala de Sonoplastia</span>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <div class="layout">
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="icon">🎵</div>
+                <h1>Escala de Sonoplastia</h1>
+                <p>Igreja Adventista Liberdade</p>
+                <div class="sync-status" id="syncStatus">
+                    <span class="sync-indicator"></span>
+                    <span id="syncText">Conectando...</span>
+                </div>
             </div>
-        </div>
 
-        <div class="tabs">
-            <button class="tab-button active" onclick="mudarAba(0)">
-                <i class="fas fa-calendar"></i> Visualizar Escala
-            </button>
-            <button class="tab-button" onclick="mudarAba(1)">
-                <i class="fas fa-plus"></i> Nova Semana
-            </button>
-        </div>
-
-        <!-- Aba Visualizar -->
-        <div id="tab-0" class="tab-content active">
-            <div id="escala-container"></div>
-        </div>
-
-        <!-- Aba Nova Semana -->
-        <div id="tab-1" class="tab-content">
-            <div style="max-width: 500px;">
-                <div class="success-message" id="successMessage">
-                    <i class="fas fa-check"></i> Semana adicionada com sucesso!
-                </div>
-
-                <h2 style="margin-bottom: 20px; color: #333;">
-                    <i class="fas fa-plus" style="margin-right: 8px;"></i> Adicionar Nova Semana
-                </h2>
-                
-                <div class="form-group">
-                    <label for="nomeOperador">Nome do Operador</label>
-                    <input type="text" id="nomeOperador" placeholder="Digite o nome do sonoplasta">
-                </div>
-
-                <div class="form-group">
-                    <label for="dataInicio">Data de Início da Semana</label>
-                    <input type="date" id="dataInicio">
-                </div>
-
-                <button class="btn btn-primary" id="btnAdicionar" onclick="adicionarSemana()">
-                    <i class="fas fa-check"></i> Adicionar Semana
+            <nav class="menu">
+                <div class="menu-label">Menu</div>
+                <button class="menu-item active" id="mi-ver" onclick="irPara('ver')">
+                    <i class="fas fa-calendar-days"></i> Visualizar Escala
                 </button>
 
-                <div class="info-box">
-                    <i class="fas fa-lightbulb"></i>
-                    <strong>Dica:</strong> A escala normalmente começa na quarta-feira, com eventos no sábado e domingo. Todos os sonoplastas verão a mesma escala em tempo real!
-                </div>
+                <div class="menu-label">Administração</div>
+                <button class="menu-item" id="mi-montar" onclick="irPara('montar')">
+                    <i class="fas fa-calendar-plus"></i> Montar Escala
+                    <i class="fas fa-lock lock" id="lock-montar"></i>
+                </button>
+                <button class="menu-item" id="mi-sonoplastas" onclick="irPara('sonoplastas')">
+                    <i class="fas fa-users"></i> Sonoplastas
+                    <i class="fas fa-lock lock" id="lock-sonoplastas"></i>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer" id="sidebarFooter" style="display:none;">
+                <div class="admin-badge"><i class="fas fa-user-shield"></i> Modo administrador</div>
+                <button class="btn-logout" onclick="sairAdmin()">
+                    <i class="fas fa-right-from-bracket"></i> Sair do modo admin
+                </button>
             </div>
-        </div>
+        </aside>
+
+        <!-- ===== CONTEÚDO ===== -->
+        <main class="content">
+
+            <!-- ===== PÁGINA: VISUALIZAR ===== -->
+            <section class="page active" id="page-ver">
+                <div class="page-title">Visualizar Escala</div>
+                <div class="page-subtitle">Filtre por mês e ano para ver a escala completa</div>
+
+                <div class="card">
+                    <div class="filter-bar">
+                        <div class="form-group">
+                            <label>Mês</label>
+                            <select id="filtroMes" onchange="renderizarMes()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ano</label>
+                            <select id="filtroAno" onchange="renderizarMes()"></select>
+                        </div>
+                    </div>
+
+                    <div class="month-stats" id="monthStats"></div>
+                    <div class="month-grid" id="monthGrid"></div>
+                </div>
+            </section>
+
+            <!-- ===== PÁGINA: LOGIN ADMIN ===== -->
+            <section class="page" id="page-login">
+                <div class="page-title">Área do Administrador</div>
+                <div class="page-subtitle">Digite a senha para acessar</div>
+
+                <div class="card login-box">
+                    <div class="icon-big"><i class="fas fa-lock"></i></div>
+                    <div class="msg error" id="loginErro">Senha incorreta. Tente novamente.</div>
+                    <div class="form-group">
+                        <label>Senha de administrador</label>
+                        <input type="password" id="senhaAdmin" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')entrarAdmin()">
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="entrarAdmin()">
+                        <i class="fas fa-right-to-bracket"></i> Entrar
+                    </button>
+                </div>
+            </section>
+
+            <!-- ===== PÁGINA: MONTAR ESCALA ===== -->
+            <section class="page" id="page-montar">
+                <div class="page-title">Montar Escala</div>
+                <div class="page-subtitle">Escolha o sonoplasta, o período e o tipo de evento</div>
+
+                <div class="card">
+                    <div class="msg success" id="msgEscalaOk"></div>
+                    <div class="msg error" id="msgEscalaErro"></div>
+
+                    <div class="form-group">
+                        <label>Período da escala</label>
+                        <div class="radio-cards">
+                            <label class="radio-card selected" id="rc-normal" onclick="selecionarModo('normal')">
+                                <input type="radio" name="modo" value="normal" checked>
+                                <div class="rc-icon"><i class="fas fa-church"></i></div>
+                                <div class="rc-title">Semana normal</div>
+                                <div class="rc-desc">Quarta, sábado e domingo</div>
+                            </label>
+                            <label class="radio-card" id="rc-completa" onclick="selecionarModo('completa')">
+                                <input type="radio" name="modo" value="completa">
+                                <div class="rc-icon"><i class="fas fa-calendar-week"></i></div>
+                                <div class="rc-title">Semana completa</div>
+                                <div class="rc-desc">Segunda a domingo (7 dias)</div>
+                            </label>
+                            <label class="radio-card" id="rc-dia" onclick="selecionarModo('dia')">
+                                <input type="radio" name="modo" value="dia">
+                                <div class="rc-icon"><i class="fas fa-calendar-day"></i></div>
+                                <div class="rc-title">Um dia</div>
+                                <div class="rc-desc">Evento em dia específico</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label id="labelData">Escolha qualquer dia da semana desejada</label>
+                            <input type="date" id="dataEscala">
+                        </div>
+                        <div class="form-group">
+                            <label>Sonoplasta</label>
+                            <select id="selectSonoplasta">
+                                <option value="">Carregando...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo do evento</label>
+                            <input type="text" id="tipoEvento" placeholder="Ex: Culto, Ensaio, Vigília...">
+                        </div>
+                    </div>
+
+                    <div id="previewDias" style="font-size:13px; color:#534AB7; margin-bottom:16px; font-weight:600;"></div>
+
+                    <button class="btn btn-primary" id="btnSalvarEscala" onclick="salvarEscala()">
+                        <i class="fas fa-check"></i> Salvar na escala
+                    </button>
+
+                    <div class="info-box">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Dica:</strong> Na semana normal, basta escolher qualquer dia da semana desejada — o sistema encontra automaticamente a quarta, o sábado e o domingo daquela semana.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== PÁGINA: SONOPLASTAS ===== -->
+            <section class="page" id="page-sonoplastas">
+                <div class="page-title">Sonoplastas</div>
+                <div class="page-subtitle">Cadastre os nomes para usar na montagem da escala</div>
+
+                <div class="card">
+                    <div class="msg success" id="msgSonoOk"></div>
+                    <div class="form-row" style="align-items: flex-end;">
+                        <div class="form-group" style="flex: 3;">
+                            <label>Nome do sonoplasta</label>
+                            <input type="text" id="novoSonoplasta" placeholder="Digite o nome" onkeydown="if(event.key==='Enter')cadastrarSonoplasta()">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <button class="btn btn-primary btn-block" onclick="cadastrarSonoplasta()">
+                                <i class="fas fa-plus"></i> Cadastrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="font-weight:700; color:#3C3489; margin-bottom:14px;">
+                        <i class="fas fa-users"></i> Sonoplastas cadastrados
+                    </div>
+                    <div class="sono-list" id="sonoList"></div>
+                </div>
+            </section>
+
+        </main>
     </div>
 
-    <!-- Firebase (Versão Compat - funciona com script global) -->
+    <!-- Firebase (Versão Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // Configuração Firebase
+        // ================== CONFIGURAÇÕES ==================
+        const SENHA_ADMIN = "liberdade2026"; // <<< TROQUE A SENHA AQUI
+
         const firebaseConfig = {
             apiKey: "AIzaSyAMYMp2Vn9ZI98ypQbi1KyoHWc4J4xrgn4",
             authDomain: "sonoplastia-escala.firebaseapp.com",
@@ -510,223 +539,400 @@
             measurementId: "G-2P231T12HM"
         };
 
-        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const semanasRef = database.ref('semanas');
+        const escalaRef = database.ref('escala');
+        const sonoplastasRef = database.ref('sonoplastas');
 
-        const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
-        let semanas = [];
-        let estaEditando = {};
+        // ================== ESTADO ==================
+        let escala = {};       // { pushKey: {data:'YYYY-MM-DD', sonoplasta, evento} }
+        let sonoplastas = {};  // { pushKey: {nome} }
+        let modoEscala = 'normal';
+        let ehAdmin = sessionStorage.getItem('sonoAdmin') === '1';
+        let paginaDestino = null;
 
-        // Verificar conexão Firebase
-        const connectedRef = database.ref('.info/connected');
-        connectedRef.on('value', (snap) => {
+        const nomesDias = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+        const nomesDiasCurto = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+        // ================== CONEXÃO ==================
+        database.ref('.info/connected').on('value', (snap) => {
+            const el = document.getElementById('syncStatus');
             if (snap.val() === true) {
-                document.getElementById('syncStatus').classList.add('connected');
-                document.getElementById('syncStatus').classList.remove('disconnected');
+                el.classList.add('connected'); el.classList.remove('disconnected');
                 document.getElementById('syncText').textContent = 'Sincronizado';
             } else {
-                document.getElementById('syncStatus').classList.remove('connected');
-                document.getElementById('syncStatus').classList.add('disconnected');
+                el.classList.remove('connected'); el.classList.add('disconnected');
                 document.getElementById('syncText').textContent = 'Desconectado';
             }
         });
 
-        // Carregamento em tempo real
-        semanasRef.on('value', (snapshot) => {
-            semanas = [];
-            snapshot.forEach((childSnapshot) => {
-                semanas.push({
-                    id: childSnapshot.key,
-                    ...childSnapshot.val()
-                });
-            });
-            semanas.sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio));
-            renderizarEscala();
+        // ================== DADOS EM TEMPO REAL ==================
+        escalaRef.on('value', (snapshot) => {
+            escala = snapshot.val() || {};
+            renderizarMes();
         });
 
-        function mudarAba(n) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + n).classList.add('active');
-            document.querySelectorAll('.tab-button')[n].classList.add('active');
+        sonoplastasRef.on('value', (snapshot) => {
+            sonoplastas = snapshot.val() || {};
+            renderizarSonoplastas();
+            preencherSelectSonoplastas();
+        });
+
+        // ================== NAVEGAÇÃO / ADMIN ==================
+        function irPara(pagina) {
+            const precisaAdmin = (pagina === 'montar' || pagina === 'sonoplastas');
+            if (precisaAdmin && !ehAdmin) {
+                paginaDestino = pagina;
+                mostrarPagina('login');
+                marcarMenu(pagina);
+                setTimeout(() => document.getElementById('senhaAdmin').focus(), 100);
+            } else {
+                mostrarPagina(pagina);
+                marcarMenu(pagina);
+            }
+            fecharSidebarMobile();
         }
 
-        function adicionarSemana() {
-            const nome = document.getElementById('nomeOperador').value.trim();
-            const data = document.getElementById('dataInicio').value;
-            const btnAdicionar = document.getElementById('btnAdicionar');
+        function mostrarPagina(pagina) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pagina).classList.add('active');
+        }
 
-            if (!nome || !data) {
-                alert('Preencha o nome do operador e a data!');
-                return;
+        function marcarMenu(pagina) {
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            const mi = document.getElementById('mi-' + pagina);
+            if (mi) mi.classList.add('active');
+        }
+
+        function entrarAdmin() {
+            const senha = document.getElementById('senhaAdmin').value;
+            if (senha === SENHA_ADMIN) {
+                ehAdmin = true;
+                sessionStorage.setItem('sonoAdmin', '1');
+                document.getElementById('senhaAdmin').value = '';
+                document.getElementById('loginErro').classList.remove('show');
+                atualizarUIAdmin();
+                mostrarPagina(paginaDestino || 'montar');
+                marcarMenu(paginaDestino || 'montar');
+            } else {
+                document.getElementById('loginErro').classList.add('show');
             }
+        }
 
-            btnAdicionar.disabled = true;
+        function sairAdmin() {
+            ehAdmin = false;
+            sessionStorage.removeItem('sonoAdmin');
+            atualizarUIAdmin();
+            irPara('ver');
+        }
 
-            const novaSemanaid = semanasRef.push().key;
-            semanasRef.child(novaSemanaid).set({
-                dataInicio: data,
-                operador: nome,
-                timestamp: new Date().toISOString()
-            }).then(() => {
-                document.getElementById('nomeOperador').value = '';
-                document.getElementById('dataInicio').value = '';
-                btnAdicionar.disabled = false;
+        function atualizarUIAdmin() {
+            document.getElementById('sidebarFooter').style.display = ehAdmin ? 'block' : 'none';
+            document.getElementById('lock-montar').style.display = ehAdmin ? 'none' : 'inline';
+            document.getElementById('lock-sonoplastas').style.display = ehAdmin ? 'none' : 'inline';
+            renderizarMes();
+            renderizarSonoplastas();
+        }
 
-                const msg = document.getElementById('successMessage');
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
+        }
+        function fecharSidebarMobile() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        // ================== SONOPLASTAS ==================
+        function cadastrarSonoplasta() {
+            const input = document.getElementById('novoSonoplasta');
+            const nome = input.value.trim();
+            if (!nome) { alert('Digite um nome!'); return; }
+
+            const existe = Object.values(sonoplastas).some(s => s.nome.toLowerCase() === nome.toLowerCase());
+            if (existe) { alert('Esse sonoplasta já está cadastrado!'); return; }
+
+            sonoplastasRef.push({ nome: nome }).then(() => {
+                input.value = '';
+                const msg = document.getElementById('msgSonoOk');
+                msg.textContent = '✓ ' + nome + ' cadastrado com sucesso!';
                 msg.classList.add('show');
                 setTimeout(() => msg.classList.remove('show'), 3000);
-            }).catch((error) => {
-                alert('Erro ao adicionar: ' + error.message);
-                btnAdicionar.disabled = false;
-            });
+            }).catch(err => alert('Erro: ' + err.message));
         }
 
-        function deletarSemana(id) {
-            if (confirm('Deseja deletar esta semana?')) {
-                semanasRef.child(id).remove().catch((error) => {
-                    alert('Erro ao deletar: ' + error.message);
-                });
+        function removerSonoplasta(id, nome) {
+            if (confirm('Remover "' + nome + '" da lista de sonoplastas?')) {
+                sonoplastasRef.child(id).remove();
             }
         }
 
-        function iniciarEdicao(id) {
-            estaEditando[id] = !estaEditando[id];
-            renderizarEscala();
-        }
+        function renderizarSonoplastas() {
+            const container = document.getElementById('sonoList');
+            const ids = Object.keys(sonoplastas);
 
-        function salvarEdicao(id, novoNome) {
-            if (!novoNome.trim()) {
-                alert('Digite um nome válido!');
-                return;
-            }
-            semanasRef.child(id).update({
-                operador: novoNome
-            }).then(() => {
-                estaEditando[id] = false;
-                renderizarEscala();
-            }).catch((error) => {
-                alert('Erro ao atualizar: ' + error.message);
-            });
-        }
-
-        function formatarData(dateString) {
-            const data = new Date(dateString + 'T00:00:00');
-            return data.toLocaleDateString('pt-BR', {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric',
-            });
-        }
-
-        function obterDiasSemana(dataInicio) {
-            const dias = [];
-            const data = new Date(dataInicio + 'T00:00:00');
-            for (let i = 0; i < 7; i++) {
-                const d = new Date(data);
-                d.setDate(d.getDate() + i);
-                dias.push(d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }));
-            }
-            return dias;
-        }
-
-        function renderizarEscala() {
-            const container = document.getElementById('escala-container');
-
-            if (semanas.length === 0) {
+            if (ids.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <h3>Nenhuma semana cadastrada ainda</h3>
-                        <p>Adicione uma nova semana para começar a escala</p>
-                    </div>
-                `;
+                        <i class="fas fa-user-plus"></i>
+                        Nenhum sonoplasta cadastrado ainda
+                    </div>`;
                 return;
             }
 
-            let html = '';
-            semanas.forEach(semana => {
-                const diasData = obterDiasSemana(semana.dataInicio);
-                
-                html += `
-                    <div class="semana-card">
-                        <div class="semana-header">
-                            <div class="semana-info">
-                                <p>Semana de ${formatarData(semana.dataInicio)}</p>
-                                <h3>
-                                    <i class="fas fa-user-check"></i>
-                                    ${semana.operador || 'Sem operador'}
-                                </h3>
-                            </div>
-                            <div class="semana-actions">
-                                <button class="btn btn-secondary" onclick="iniciarEdicao('${semana.id}')">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger" onclick="deletarSemana('${semana.id}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                `;
+            const ordenados = ids.sort((a, b) => sonoplastas[a].nome.localeCompare(sonoplastas[b].nome, 'pt-BR'));
 
-                if (estaEditando[semana.id]) {
-                    html += `
-                        <div class="edit-form">
-                            <input type="text" id="edit-${semana.id}" value="${semana.operador}" placeholder="Nome do operador">
-                            <div class="buttons">
-                                <button class="btn btn-primary" style="flex: 1;" onclick="salvarEdicao('${semana.id}', document.getElementById('edit-${semana.id}').value)">
-                                    Salvar
-                                </button>
-                                <button class="btn btn-secondary" style="flex: 1;" onclick="iniciarEdicao('${semana.id}')">
-                                    Cancelar
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                html += `<div class="dias-grid">`;
-                diasSemana.forEach((dia, idx) => {
-                    const ehPrincipal = idx === 0 || idx === 6 || idx === 3;
-                    html += `
-                        <div class="dia-box ${ehPrincipal ? 'principal' : ''}">
-                            <div class="dia-nome">${dia}</div>
-                            <div class="dia-data">${diasData[idx]}</div>
-                            ${ehPrincipal ? '<div class="dia-icon">🎵</div>' : ''}
-                        </div>
-                    `;
-                });
-                html += `</div>`;
-                html += `</div>`;
-            });
-
-            container.innerHTML = html;
-
-            // Adicionar estatísticas
-            const operadoresUnicos = new Set(semanas.map(s => s.operador).filter(o => o)).size;
-            const stats = `
-                <div class="stats">
-                    <div class="stat-card">
-                        <div class="label">Total de Semanas</div>
-                        <div class="value">${semanas.length}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="label">Operadores Únicos</div>
-                        <div class="value">${operadoresUnicos}</div>
-                    </div>
+            container.innerHTML = ordenados.map(id => `
+                <div class="sono-item">
+                    <div class="name"><i class="fas fa-headphones"></i> ${escapeHtml(sonoplastas[id].nome)}</div>
+                    <button class="btn btn-danger-sm" onclick="removerSonoplasta('${id}', '${escapeHtml(sonoplastas[id].nome)}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
-            `;
-            container.innerHTML += stats;
+            `).join('');
         }
 
-        // Definir data de hoje por padrão
-        const hoje = new Date().toISOString().split('T')[0];
-        document.getElementById('dataInicio').value = hoje;
+        function preencherSelectSonoplastas() {
+            const select = document.getElementById('selectSonoplasta');
+            const ids = Object.keys(sonoplastas);
+            if (ids.length === 0) {
+                select.innerHTML = '<option value="">Cadastre um sonoplasta primeiro</option>';
+                return;
+            }
+            const ordenados = ids.sort((a, b) => sonoplastas[a].nome.localeCompare(sonoplastas[b].nome, 'pt-BR'));
+            select.innerHTML = '<option value="">Selecione...</option>' +
+                ordenados.map(id => `<option value="${escapeHtml(sonoplastas[id].nome)}">${escapeHtml(sonoplastas[id].nome)}</option>`).join('');
+        }
 
-        // Renderização inicial
-        renderizarEscala();
+        // ================== MONTAR ESCALA ==================
+        function selecionarModo(modo) {
+            modoEscala = modo;
+            document.querySelectorAll('.radio-card').forEach(rc => rc.classList.remove('selected'));
+            document.getElementById('rc-' + modo).classList.add('selected');
+
+            const label = document.getElementById('labelData');
+            if (modo === 'dia') label.textContent = 'Data do evento';
+            else label.textContent = 'Escolha qualquer dia da semana desejada';
+
+            atualizarPreview();
+        }
+
+        document.getElementById('dataEscala').addEventListener('change', atualizarPreview);
+
+        function calcularDias(dataStr, modo) {
+            // Retorna array de datas 'YYYY-MM-DD' conforme o modo
+            const base = new Date(dataStr + 'T00:00:00');
+            const diaSemana = base.getDay(); // 0=Dom ... 6=Sáb
+
+            // Encontrar a segunda-feira da semana (considerando semana de Seg a Dom)
+            const segunda = new Date(base);
+            const offset = (diaSemana === 0) ? -6 : (1 - diaSemana);
+            segunda.setDate(base.getDate() + offset);
+
+            const fmt = (d) => {
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${dd}`;
+            };
+
+            if (modo === 'dia') return [dataStr];
+
+            if (modo === 'completa') {
+                const dias = [];
+                for (let i = 0; i < 7; i++) {
+                    const d = new Date(segunda);
+                    d.setDate(segunda.getDate() + i);
+                    dias.push(fmt(d));
+                }
+                return dias;
+            }
+
+            // modo normal: quarta (seg+2), sábado (seg+5), domingo (seg+6)
+            return [2, 5, 6].map(i => {
+                const d = new Date(segunda);
+                d.setDate(segunda.getDate() + i);
+                return fmt(d);
+            });
+        }
+
+        function atualizarPreview() {
+            const dataStr = document.getElementById('dataEscala').value;
+            const preview = document.getElementById('previewDias');
+            if (!dataStr) { preview.textContent = ''; return; }
+
+            const dias = calcularDias(dataStr, modoEscala);
+            const textos = dias.map(d => {
+                const dt = new Date(d + 'T00:00:00');
+                return nomesDiasCurto[dt.getDay()] + ' ' + String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0');
+            });
+            preview.innerHTML = '<i class="fas fa-calendar-check"></i> Será escalado em: ' + textos.join(' • ');
+        }
+
+        function salvarEscala() {
+            const dataStr = document.getElementById('dataEscala').value;
+            const sonoplasta = document.getElementById('selectSonoplasta').value;
+            const evento = document.getElementById('tipoEvento').value.trim();
+            const btn = document.getElementById('btnSalvarEscala');
+            const msgOk = document.getElementById('msgEscalaOk');
+            const msgErro = document.getElementById('msgEscalaErro');
+
+            msgOk.classList.remove('show');
+            msgErro.classList.remove('show');
+
+            if (!dataStr) { msgErro.textContent = 'Escolha uma data!'; msgErro.classList.add('show'); return; }
+            if (!sonoplasta) { msgErro.textContent = 'Selecione um sonoplasta!'; msgErro.classList.add('show'); return; }
+            if (!evento) { msgErro.textContent = 'Digite o tipo do evento!'; msgErro.classList.add('show'); return; }
+
+            const dias = calcularDias(dataStr, modoEscala);
+            btn.disabled = true;
+
+            const updates = {};
+            dias.forEach(dia => {
+                const key = escalaRef.push().key;
+                updates[key] = {
+                    data: dia,
+                    sonoplasta: sonoplasta,
+                    evento: evento,
+                    timestamp: new Date().toISOString()
+                };
+            });
+
+            escalaRef.update(updates).then(() => {
+                btn.disabled = false;
+                document.getElementById('tipoEvento').value = '';
+                msgOk.textContent = '✓ ' + sonoplasta + ' escalado(a) em ' + dias.length + ' dia(s)!';
+                msgOk.classList.add('show');
+                setTimeout(() => msgOk.classList.remove('show'), 4000);
+
+                // Ir para o mês da escala no filtro
+                const dt = new Date(dias[0] + 'T00:00:00');
+                document.getElementById('filtroMes').value = dt.getMonth();
+                document.getElementById('filtroAno').value = dt.getFullYear();
+                renderizarMes();
+            }).catch(err => {
+                btn.disabled = false;
+                msgErro.textContent = 'Erro: ' + err.message;
+                msgErro.classList.add('show');
+            });
+        }
+
+        function removerEvento(id) {
+            if (confirm('Remover este item da escala?')) {
+                escalaRef.child(id).remove();
+            }
+        }
+
+        // ================== VISUALIZAR / CALENDÁRIO ==================
+        function montarFiltros() {
+            const selMes = document.getElementById('filtroMes');
+            const selAno = document.getElementById('filtroAno');
+            const hoje = new Date();
+
+            selMes.innerHTML = nomesMeses.map((m, i) => `<option value="${i}">${m}</option>`).join('');
+            selMes.value = hoje.getMonth();
+
+            const anoAtual = hoje.getFullYear();
+            let anosHtml = '';
+            for (let a = anoAtual - 1; a <= anoAtual + 2; a++) {
+                anosHtml += `<option value="${a}">${a}</option>`;
+            }
+            selAno.innerHTML = anosHtml;
+            selAno.value = anoAtual;
+        }
+
+        function renderizarMes() {
+            const grid = document.getElementById('monthGrid');
+            const statsEl = document.getElementById('monthStats');
+            if (!grid) return;
+
+            const mes = parseInt(document.getElementById('filtroMes').value);
+            const ano = parseInt(document.getElementById('filtroAno').value);
+
+            const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+            const hoje = new Date();
+            const hojeStr = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(hoje.getDate()).padStart(2,'0')}`;
+
+            // Agrupar eventos por data
+            const porData = {};
+            Object.keys(escala).forEach(id => {
+                const ev = escala[id];
+                if (!porData[ev.data]) porData[ev.data] = [];
+                porData[ev.data].push({ id, ...ev });
+            });
+
+            let html = '';
+            let totalEventos = 0;
+            const sonosDoMes = new Set();
+
+            for (let dia = 1; dia <= diasNoMes; dia++) {
+                const dataStr = `${ano}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+                const dt = new Date(ano, mes, dia);
+                const dw = dt.getDay();
+                const eventos = porData[dataStr] || [];
+                const ehFimDeSemana = (dw === 0 || dw === 6);
+                const ehHoje = (dataStr === hojeStr);
+
+                totalEventos += eventos.length;
+                eventos.forEach(e => sonosDoMes.add(e.sonoplasta));
+
+                let eventosHtml;
+                if (eventos.length === 0) {
+                    eventosHtml = '<div class="day-empty">— sem escala —</div>';
+                } else {
+                    eventosHtml = eventos.map(ev => `
+                        <div class="event-chip">
+                            <span class="sono"><i class="fas fa-headphones"></i> ${escapeHtml(ev.sonoplasta)}</span>
+                            <span class="tipo">${escapeHtml(ev.evento || 'Evento')}</span>
+                            ${ehAdmin ? `<button class="del" title="Remover" onclick="removerEvento('${ev.id}')"><i class="fas fa-trash"></i></button>` : ''}
+                        </div>
+                    `).join('');
+                }
+
+                html += `
+                    <div class="day-row ${eventos.length ? 'has-event' : ''} ${ehFimDeSemana ? 'is-weekend' : ''} ${ehHoje ? 'today' : ''}">
+                        <div class="day-date">
+                            <div class="num">${String(dia).padStart(2,'0')}</div>
+                            <div class="wd">${nomesDiasCurto[dw]}</div>
+                        </div>
+                        <div class="day-events">${eventosHtml}</div>
+                    </div>
+                `;
+            }
+
+            grid.innerHTML = html;
+
+            statsEl.innerHTML = `
+                <div class="stat-card">
+                    <div class="label">Dias com escala</div>
+                    <div class="value">${Object.keys(porData).filter(d => d.startsWith(`${ano}-${String(mes+1).padStart(2,'0')}`)).length}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Total de eventos</div>
+                    <div class="value">${totalEventos}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Sonoplastas no mês</div>
+                    <div class="value">${sonosDoMes.size}</div>
+                </div>
+            `;
+        }
+
+        // ================== UTIL ==================
+        function escapeHtml(str) {
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+        }
+
+        // ================== INIT ==================
+        montarFiltros();
+        renderizarMes();
+        atualizarUIAdmin();
+
+        const hj = new Date();
+        document.getElementById('dataEscala').value =
+            `${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}-${String(hj.getDate()).padStart(2,'0')}`;
+        atualizarPreview();
     </script>
 </body>
 </html>
